@@ -1,4 +1,4 @@
-// var SERVER_ACCOUNT = JSON.parse(process.env.SERVER_ACCOUNT)
+var SERVER_ACCOUNT = JSON.parse(process.env.SERVER_ACCOUNT)
 
 
 
@@ -6,18 +6,7 @@
 // console.log(SERVER_ACCOUNT)
 const PORT = process.env.PORT || 5000;
 
-SERVER_ACCOUNT = {
-    "type": "service_account",
-    "project_id": "tweet-profile-pic",
-    "private_key_id": "359d4322312e8b5263755dfdcdfe9f9c8c1239e1",
-    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCK30WiorMMVlTT\n/EB7F3Sm4+XUml141AG01vKb+hvhWZ1Qw4dIKAEnWknPagQ8W9N2+HXxZjMCLFAy\nlWULFUiuc5E9wHZIYI3wSHnsXlTQ+yqk6i/YYDwPvPrS9HWWMZ1JVb+eVnom374q\njlgc7CWPh4vQt1+X+TLc3wTZPbM956zdUdmX9h86qKAit2hJZ9KfMa5BWBc+IJKh\nZJLdtXBxsOuFmu9fP6nsJned27zxk3iFRnmIbxssqZCmdJv9krhV7l0y0q7s9DWt\n456FxfOulT1Kuofim3lWzQVkW/yQOJiQPyhdNya5eGSSE61qmrIWxAIni0FFdkLt\nFZtFI271AgMBAAECggEAK6mujceE7xyXuD0IEwuZaD2gTfuo5uwVi0PH7OWy7WQN\nM87+UmANmM9pBJdLNKUUdEQDZT5iTE0dfAH/zn/HJd59LIK+TdxZ1FIdT4WLOle2\nHTrqhygeyj37SOeGrw3za5LT2BdNebqAYoX1y0YuOxX9jkaRfkliRhKyxhEBsbUW\nvatYNRwVWVvl9IugUBunv+qya+uNSgP9joBjXz04pq6czWXvvTkXsAIh3NiORtD9\n/IXX0hCQHhBh/+SxNcXWa8alEJFwBuk0wUWkvHruDwcaDc7xy7UAcGvii+jBAQAZ\nRnr2ChF9vp/89sNxE7/EcVyiHDVGbtJg/igQ1A/lowKBgQDDpS3WPsW8AFZ7uXA/\nJuvH5uWsKFNw3Wo5HFRhjrm8GEuoYGEmKlGIpXIZvlpqli5LvhcOpxE3loB5iFL3\nmiECbfY331gSOs0MIcFvF/EBdyKMd2FrzXcV1VI8o8sz7qhnqfDg/LNqEjdOZ1dp\noDsIcF2E9zCJMOzxFVxfW29lNwKBgQC1toPjvIbSKt5kMJsBQeR48ySp778Ucjn6\ny0ozgx5rCxpwkroKw/l3xq9ft+FYISYWxnRPToShbYppcOcuK2l1blnscm1BWFga\no5dPqUWRaqN41qpPkLGdfSodzWbioyb4SHhTwDWEwcUlHa3ZUMuvkxe8Bkngc0ur\nJrUj+6JjMwKBgCVt4nkMhVPUVLdS4NCUJ6OU3veyt1PuaDYI33PSlGIR29eYqL1e\ndz7HOC8Ipc+ib7T55vtcpwSVfHrDw+uuxwXp96L0zaqfKT9a7eDNGcSIAEoTRMYV\nBuVcbGFBjMygqgM7FeRVNBXk6kPLrYN9rg2NQbcAe36jp5Dv3z43Bfa9AoGBAKnY\njFSsnfQJ/870I548QdrPocB5iEgLMKh7pcKaVy9EtJTugJiZby+GddvpGuduLJTz\nMDoEsTHWGp7N2jgseak62TCKEBcZBVj4+fCKzqzKWTwUoiI2o94J5PjwSa+jQkSm\nMFpP+XY6TBSSNjI/M/PLcE7eLeVuvxad2ohkpvdDAoGAQid/Twb0bKAoKN3f5VsQ\n7Df6ezqc2suGrqAuRKz/piEVHCqK8JZEIj5sWqfHwHlxcLo8FZmn5Dshme4wDzjK\nXwqQo9OerjTy/Nrw4le2riPbfZowZLQ/pBWTmwu8yUiqzMtL3gKqoNzX5PrGi4/M\nUPu2VVViVPAv6IY7eIvuvRM=\n-----END PRIVATE KEY-----\n",
-    "client_email": "firebase-adminsdk-2u662@tweet-profile-pic.iam.gserviceaccount.com",
-    "client_id": "101544439347829053985",
-    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-    "token_uri": "https://oauth2.googleapis.com/token",
-    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-2u662%40tweet-profile-pic.iam.gserviceaccount.com"
-}
+
 
 
 var express = require("express");
@@ -263,9 +252,15 @@ app.post("/upload", upload.any(), (req, res, next) => {  // never use upload.sin
                 }).then((urlData, err) => {
                     if (!err) {
                         console.log("public downloadable url: ", urlData[0]) // this is public downloadable url 
-                        userModel.findOne({ email: req.body.email }, (err, user) => {
+                        userModel.findOne({ email: req.headers.jToken.email }, (err, user) => {
                             if (!err) {
-                                user.update({ profilePic: urlData[0] }, {}, function (err, data) {
+                                tweetModel.updateMany({email: req.headers.jToken.email},{profilePic: urlData[0]}, (err, userTweet)=>{
+                                    console.log("jsdlkfjsldjfaskfaskdsljfslajfa"  + userTweet)
+                                    if(!err){
+                                        console.log('user update')
+                                    }
+                                })
+                                 user.update({ profilePic: urlData[0] }, {}, function (err, data) {
                                     // console.log(user)
                                     res.send({
                                         pic: user.profilePic
